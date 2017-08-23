@@ -35,12 +35,12 @@ class App {
         this.container = document.getElementById('game-container');
         this.container.innerHTML = '';
 
+
         this.canvas = document.createElement('canvas');
         this.canvas.width = (width * this.TILE_WIDTH) + ((width - 2) * this.LINE_WIDTH);
         this.canvas.height = (height * this.TILE_WIDTH) + ((height - 2) * this.LINE_WIDTH);
         this.canvas.style.outline = '1px solid black';
         this.container.appendChild(this.canvas);
-
 
         this.playButton = document.createElement('button');
         this.playButton.innerHTML = 'Play';
@@ -52,6 +52,12 @@ class App {
         this.nextPeriodButton.style.marginLeft = '5px';
         this.nextPeriodButton.onclick = this.nextPeriod.bind(this);
         this.container.appendChild(this.nextPeriodButton);
+
+        this.advanceSeveralPeriodsButton = document.createElement('button');
+        this.advanceSeveralPeriodsButton.innerHTML = 'Advance n';
+        this.advanceSeveralPeriodsButton.style.marginLeft = '5px';
+        this.advanceSeveralPeriodsButton.onclick = this.advanceSeveralPeriods.bind(this);
+        this.container.appendChild(this.advanceSeveralPeriodsButton);
 
         this.clearButton = document.createElement('button');
         this.clearButton.innerHTML = 'Clear';
@@ -120,6 +126,13 @@ class App {
         }
 
         this.tiles = tiles;
+    }
+
+    advanceSeveralPeriods() {
+        let periods = parseInt(window.prompt('Advance how many generations?'));
+        for (let i = 0; i < periods; i++) {
+            this.nextPeriod();
+        }
     }
 
     countNeighbours(tiles, x, y) {
