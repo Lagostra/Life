@@ -2,10 +2,22 @@
 class App {
 
     constructor(width, height) {
+        this.width = width;
+        this.height = height;
+
         this.TILE_WIDTH = 11;
         this.LINE_WIDTH = 1;
         this.playing = false;
+        this.updateFrequency = 1;
+        this.lastUpdate = 0;
 
+        this.buildUI(width, height);
+        this.clearTiles()
+
+        setInterval(this.update.bind(this), 1000/60);
+    }
+
+    buildUI(width, height) {
         this.container = document.getElementById('game-container');
 
         this.canvas = document.createElement('canvas');
@@ -14,28 +26,72 @@ class App {
         this.canvas.style.outline = '1px solid black';
         this.container.appendChild(this.canvas);
 
-        this.container.style.width = this.canvas.width + 'px';
-
-        this.tiles = new Array();
-        for (let y = 0; y < height; y++) {
-            let row = new Array();
-            for (let x = 0; x < width; x++) {
-                row.push(false);
-            }
-            this.tiles.push(row);
-        }
-
         this.canvas.onclick = this.clickHandler.bind(this);
 
-        setInterval(this.update.bind(this), 1000/60);
+        this.playButton = document.createElement('button');
+        this.playButton.innerHTML = 'Play';
+        this.playButton.onclick = this.playButtonClick.bind(this);
+        this.container.appendChild(this.playButton);
+
+        this.clearButton = document.createElement('button');
+        this.clearButton.innerHTML = 'Clear';
+        this.clearButton.onclick = this.clearTiles.bind(this);
+        this.container.appendChild(this.clearButton);
+
+        this.container.style.width = this.canvas.width + 'px';
     }
 
     update() {
         if (this.playing) {
-            
+            let d = new Date();
+            if (d.getTime() - this.lastUpdate > 1000/this.updateFrequency) {
+                this.lastUpdate = d.getTime();
+
+                let tiles = new Array();
+
+                for (let y = 0; y < this.tiles.length; y++) {
+                    tiles[y] = new Array();
+                    for (let x = 0; x < this.tiles[y].length; x++) {
+                        const neighbours = this.countNeighbours(this.tiles, x, y);
+
+                        tiles[y][x] = this.tiles[y][x];
+
+                        if (this.tiles[y][x]) {
+                            if (neighbours < 2) {
+                                tiles[y][x] = false;
+                            } else if (neighbours > 3) {
+                                tiles[y][x] = false;
+                            }
+                        } else {
+                            if (neighbours === 3) {
+                                tiles[y][x] = true;
+                            }
+                        }
+                    }
+                }
+
+                this.tiles = tiles;
+            }
         }
 
         this.render();
+    }
+
+    countNeighbours(tiles, x, y) {
+        let count = 0;
+        
+        for (let y2 = y - 1; y2 <= y + 1; y2++) {
+            if (y2 < 0 || y2 >= tiles.length) { continue; }
+            for (let x2 = x - 1; x2 <= x + 1; x2++) {
+                if (x2 < 0 || x2 >= tiles[y2].length) { continue; }
+                if (x2 === x && y2 === y) { continue; }
+                if (tiles[y2][x2]) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 
     clickHandler(event) {
@@ -46,6 +102,26 @@ class App {
         let tileY = Math.floor(y / (this.TILE_WIDTH + this.LINE_WIDTH));
 
         this.tiles[tileY][tileX] = !this.tiles[tileY][tileX];
+    }
+
+    playButtonClick() {
+        this.playing = !this.playing;
+        if (this.playing) {
+            this.playButton.innerHTML = 'Pause';
+        } else {
+            this.playButton.innerHTML = 'Play';
+        }
+    }
+
+    clearTiles() {
+        this.tiles = new Array();
+        for (let y = 0; y < this.height; y++) {
+            let row = new Array();
+            for (let x = 0; x < this.width; x++) {
+                row.push(false);
+            }
+            this.tiles.push(row);
+        }
     }
 
     render() {
