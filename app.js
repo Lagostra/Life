@@ -25,6 +25,7 @@ class App {
 
     buildUI(width, height) {
         this.container = document.getElementById('game-container');
+        this.container.innerHTML = '';
 
         this.canvas = document.createElement('canvas');
         this.canvas.width = (width * this.TILE_WIDTH) + ((width - 2) * this.LINE_WIDTH);
