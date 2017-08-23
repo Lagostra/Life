@@ -20,6 +20,14 @@ class App {
         this.canvas.onmousemove = this.mouseMoveHandler.bind(this);
         this.canvas.onmouseup = () => { this.drag = false; }
 
+        document.onkeypress = (e) => {
+            e = e || window.event;
+
+            if (e.keyCode === 32) {
+                this.playButtonClick();
+            }
+        }
+
         setInterval(this.update.bind(this), 1000/60);
     }
 
