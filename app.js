@@ -48,7 +48,7 @@ class App {
         this.speedSlider = document.createElement('input');
         this.speedSlider.setAttribute('type', 'range');
         this.speedSlider.setAttribute('min', 1);
-        this.speedSlider.setAttribute('max', 10);
+        this.speedSlider.setAttribute('max', 60);
         this.speedSlider.value = 1;
         this.speedSlider.onchange = this.speedChanged.bind(this);
         this.speedLabel = document.createElement('label');
