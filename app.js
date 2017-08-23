@@ -8,11 +8,17 @@ class App {
         this.TILE_WIDTH = 11;
         this.LINE_WIDTH = 1;
         this.playing = false;
+        this.drag = false;
+        this.mouseDragChangeTiles = false;
         this.updateFrequency = 1;
         this.lastUpdate = 0;
 
         this.buildUI(width, height);
         this.clearTiles()
+
+        this.canvas.onmousedown = this.mouseDownHandler.bind(this);
+        this.canvas.onmousemove = this.mouseMoveHandler.bind(this);
+        this.canvas.onmouseup = () => { this.drag = false; }
 
         setInterval(this.update.bind(this), 1000/60);
     }
@@ -26,7 +32,6 @@ class App {
         this.canvas.style.outline = '1px solid black';
         this.container.appendChild(this.canvas);
 
-        this.canvas.onclick = this.clickHandler.bind(this);
 
         this.playButton = document.createElement('button');
         this.playButton.innerHTML = 'Play';
@@ -125,14 +130,30 @@ class App {
         return count;
     }
 
-    clickHandler(event) {
+    mouseDownHandler(event) {
         let x = event.pageX - this.canvas.offsetLeft;
         let y = event.pageY - this.canvas.offsetTop;
 
         let tileX = Math.floor(x / (this.TILE_WIDTH + this.LINE_WIDTH));
         let tileY = Math.floor(y / (this.TILE_WIDTH + this.LINE_WIDTH));
 
+        this.mouseDragChangeTiles = this.tiles[tileY][tileX];
         this.tiles[tileY][tileX] = !this.tiles[tileY][tileX];
+        this.drag = true;
+    }
+
+    mouseMoveHandler(event) {
+        if (!this.drag) { return; }
+
+        let x = event.pageX - this.canvas.offsetLeft;
+        let y = event.pageY - this.canvas.offsetTop;
+
+        let tileX = Math.floor(x / (this.TILE_WIDTH + this.LINE_WIDTH));
+        let tileY = Math.floor(y / (this.TILE_WIDTH + this.LINE_WIDTH));
+
+        if (this.tiles[tileY][tileX] === this.mouseDragChangeTiles) {
+            this.tiles[tileY][tileX] = !this.tiles[tileY][tileX];
+        }
     }
 
     playButtonClick() {
