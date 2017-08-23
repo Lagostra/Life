@@ -200,6 +200,9 @@ class App {
             }
             this.tiles.push(row);
         }
+		
+		this.playing = false;
+		this.playButton.innerHTML = 'Play';
     }
 
     fillRandom(fillRatio = 0.2) {
