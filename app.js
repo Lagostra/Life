@@ -10,7 +10,7 @@ class App {
         this.playing = false;
         this.drag = false;
         this.mouseDragChangeTiles = false;
-        this.updateFrequency = 1;
+        this.updateFrequency = 3;
         this.lastUpdate = 0;
 
         this.buildUI(width, height);
