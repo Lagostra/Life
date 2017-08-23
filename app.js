@@ -33,10 +33,31 @@ class App {
         this.playButton.onclick = this.playButtonClick.bind(this);
         this.container.appendChild(this.playButton);
 
+        this.nextPeriodButton = document.createElement('button');
+        this.nextPeriodButton.innerHTML = 'Next';
+        this.nextPeriodButton.style.marginLeft = '5px';
+        this.nextPeriodButton.onclick = this.nextPeriod.bind(this);
+        this.container.appendChild(this.nextPeriodButton);
+
         this.clearButton = document.createElement('button');
         this.clearButton.innerHTML = 'Clear';
+        this.clearButton.style.marginLeft = '5px';
         this.clearButton.onclick = this.clearTiles.bind(this);
         this.container.appendChild(this.clearButton);
+
+        this.speedSlider = document.createElement('input');
+        this.speedSlider.setAttribute('type', 'range');
+        this.speedSlider.setAttribute('min', 1);
+        this.speedSlider.setAttribute('max', 10);
+        this.speedSlider.value = 1;
+        this.speedSlider.onchange = this.speedChanged.bind(this);
+        this.speedLabel = document.createElement('label');
+        this.speedLabel.innerHTML = 'Speed:';
+        this.speedLabel.style.marginLeft = '5px';
+        this.speedSlider.style.position = 'relative';
+        this.speedSlider.style.top = '5px';
+        this.container.appendChild(this.speedLabel);
+        this.container.appendChild(this.speedSlider);
 
         this.container.style.width = this.canvas.width + 'px';
     }
@@ -47,34 +68,38 @@ class App {
             if (d.getTime() - this.lastUpdate > 1000/this.updateFrequency) {
                 this.lastUpdate = d.getTime();
 
-                let tiles = new Array();
-
-                for (let y = 0; y < this.tiles.length; y++) {
-                    tiles[y] = new Array();
-                    for (let x = 0; x < this.tiles[y].length; x++) {
-                        const neighbours = this.countNeighbours(this.tiles, x, y);
-
-                        tiles[y][x] = this.tiles[y][x];
-
-                        if (this.tiles[y][x]) {
-                            if (neighbours < 2) {
-                                tiles[y][x] = false;
-                            } else if (neighbours > 3) {
-                                tiles[y][x] = false;
-                            }
-                        } else {
-                            if (neighbours === 3) {
-                                tiles[y][x] = true;
-                            }
-                        }
-                    }
-                }
-
-                this.tiles = tiles;
+                this.nextPeriod();
             }
         }
 
         this.render();
+    }
+
+    nextPeriod() {
+        let tiles = new Array();
+
+        for (let y = 0; y < this.tiles.length; y++) {
+            tiles[y] = new Array();
+            for (let x = 0; x < this.tiles[y].length; x++) {
+                const neighbours = this.countNeighbours(this.tiles, x, y);
+
+                tiles[y][x] = this.tiles[y][x];
+
+                if (this.tiles[y][x]) {
+                    if (neighbours < 2) {
+                        tiles[y][x] = false;
+                    } else if (neighbours > 3) {
+                        tiles[y][x] = false;
+                    }
+                } else {
+                    if (neighbours === 3) {
+                        tiles[y][x] = true;
+                    }
+                }
+            }
+        }
+
+        this.tiles = tiles;
     }
 
     countNeighbours(tiles, x, y) {
@@ -111,6 +136,10 @@ class App {
         } else {
             this.playButton.innerHTML = 'Play';
         }
+    }
+    
+    speedChanged() {
+        this.updateFrequency = this.speedSlider.value;
     }
 
     clearTiles() {
