@@ -45,6 +45,12 @@ class App {
         this.clearButton.onclick = this.clearTiles.bind(this);
         this.container.appendChild(this.clearButton);
 
+        this.randomButton = document.createElement('button');
+        this.randomButton.innerHTML = 'Random';
+        this.randomButton.style.marginLeft = '5px';
+        this.randomButton.onclick = () => { this.fillRandom(); };
+        this.container.appendChild(this.randomButton)
+
         this.speedSlider = document.createElement('input');
         this.speedSlider.setAttribute('type', 'range');
         this.speedSlider.setAttribute('min', 1);
@@ -148,6 +154,17 @@ class App {
             let row = new Array();
             for (let x = 0; x < this.width; x++) {
                 row.push(false);
+            }
+            this.tiles.push(row);
+        }
+    }
+
+    fillRandom(fillRatio = 0.2) {
+        this.tiles = new Array();
+        for (let y = 0; y < this.height; y++) {
+            let row = new Array();
+            for (let x = 0; x < this.width; x++) {
+                row.push(Math.random() <= fillRatio);
             }
             this.tiles.push(row);
         }
